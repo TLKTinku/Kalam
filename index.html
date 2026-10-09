@@ -1,0 +1,122 @@
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#33468F"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><title>कलम</title>
+<style>
+:root{--bg:#F3F5F8;--sf:#fff;--ink:#1B2433;--mu:#6A7385;--ac:#33468F;--ln:#E1E5EC;--bad:#B3261E}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#12151C;--sf:#1B1F29;--ink:#E7EAF2;--mu:#8F98AB;--ac:#8FA6FF;--ln:#2A3040;--bad:#F2877F}}
+:root[data-theme=dark]{--bg:#12151C;--sf:#1B1F29;--ink:#E7EAF2;--mu:#8F98AB;--ac:#8FA6FF;--ln:#2A3040;--bad:#F2877F}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,'Noto Sans Devanagari',sans-serif}
+#app{height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+header{display:flex;align-items:center;gap:4px;height:56px;padding:0 8px 0 14px;background:var(--sf);border-bottom:1px solid var(--ln);flex:none}
+header h1{flex:1;font-size:20px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:600 17px inherit;font-family:inherit;outline:0}
+.ic{min-width:44px;height:44px;border:0;background:none;color:var(--ink);border-radius:12px;display:grid;place-items:center;font:600 15px system-ui}
+.ic:active{background:var(--ln)}
+main{flex:1;overflow:auto;padding:14px 14px 100px}
+.row{display:flex;align-items:center;background:var(--sf);border:1px solid var(--ln);border-radius:14px;margin-bottom:10px;padding:2px 4px 2px 0}
+.row a{flex:1;min-width:0;padding:13px 16px;color:inherit;text-decoration:none}
+.row b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row span{font-size:13px;color:var(--mu)}
+.warn{display:block;background:var(--sf);border:1px solid var(--bad);color:var(--bad);border-radius:12px;padding:12px 14px;margin-bottom:12px;text-decoration:none;font-size:14px}
+.empty{color:var(--mu);text-align:center;margin:70px 24px}
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));background:var(--ac);color:var(--bg);border:0;border-radius:28px;padding:15px 22px;font:600 16px inherit;font-family:inherit;box-shadow:0 4px 14px #0004}
+.btn{display:block;width:100%;padding:15px;margin-bottom:10px;border:1px solid var(--ln);border-radius:14px;background:var(--sf);color:var(--ink);font:600 16px inherit;font-family:inherit;text-align:left}
+.btn.p{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.tools{display:flex;gap:8px;margin-bottom:12px}.tools .btn{margin:0;text-align:center;font-size:14px;padding:12px}.row span{white-space:normal}
+.note{color:var(--mu);font-size:14px;margin:4px 2px 18px}
+textarea{flex:1;width:100%;border:0;outline:0;resize:none;background:var(--bg);color:var(--ink);padding:18px 18px 12px;line-height:1.9;font-family:'Noto Serif Devanagari','Noto Serif',Georgia,serif}
+footer{flex:none;padding:6px 16px calc(8px + env(safe-area-inset-bottom));font-size:12px;color:var(--mu);background:var(--sf);border-top:1px solid var(--ln)}
+.ov{position:fixed;inset:0;background:#0007;display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.dg{background:var(--sf);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom))}
+.dg h2{font-size:18px;margin-bottom:6px}.dg p{color:var(--mu);font-size:14px;margin-bottom:10px}
+.dg input{width:100%;margin:8px 0;padding:13px;border:1px solid var(--ln);border-radius:12px;background:var(--bg);color:var(--ink);font:16px inherit;font-family:inherit}
+.bt{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.bt button{padding:14px;border:0;border-radius:12px;background:var(--ac);color:var(--bg);font:600 15px inherit;font-family:inherit}
+.bt .bad{background:var(--bad);color:#fff}.bt .ghost{background:none;color:var(--mu)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:20px;font-size:14px;z-index:10}
+</style></head><body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const svg=p=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const I={back:svg('<path d="M15 5l-7 7 7 7"/>'),up:svg('<path d="M6 15l6-6 6 6"/>'),down:svg('<path d="M6 9l6 6 6-6"/>'),x:svg('<path d="M6 6l12 12M18 6L6 18"/>'),bk:svg('<path d="M12 16V5M7 10l5-5 5 5M5 19h14"/>'),ed:svg('<path d="M4 20l4-1 11-11-3-3L5 16z"/>'),se:svg('<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>'),th:svg('<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 010 16z" fill="currentColor"/>')};
+let db,cur=null,timer=null,pendN=null;
+const open=()=>new Promise((a,b)=>{const r=indexedDB.open('kalam',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('novels',{keyPath:'id'});d.createObjectStore('chapters',{keyPath:'id'}).createIndex('nov','nid')};r.onsuccess=()=>a(r.result);r.onerror=()=>b(r.error)});
+const rq=r=>new Promise((a,b)=>{r.onsuccess=()=>a(r.result);r.onerror=()=>b(r.error)});
+const st=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
+const all=s=>rq(st(s).getAll()),get=(s,k)=>rq(st(s).get(k)),put=(s,v)=>rq(st(s,'readwrite').put(v)),del=(s,k)=>rq(st(s,'readwrite').delete(k));
+const chaps=n=>rq(st('chapters').index('nov').getAll(n)).then(a=>a.sort((x,y)=>x.ord-y.ord));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const wc=t=>(t.match(/\S+/g)||[]).length,fmt=n=>n.toLocaleString('hi-IN');
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),2300)}
+function dlg(t,m,o={}){return new Promise(res=>{
+ const b=o.btns||(o.input?[['सहेजें',1],['रद्द करें',null,'ghost']]:[['ठीक है',1]]);
+ const d=document.createElement('div');d.className='ov';
+ d.innerHTML=`<form class="dg"><h2>${esc(t)}</h2>${m?`<p>${esc(m)}</p>`:''}${o.input?`<input placeholder="${esc(o.ph||'')}" value="${esc(o.value||'')}" autocomplete="off">`:''}<div class="bt">${b.map(([l,v,c],i)=>`<button type="button" data-i="${i}" class="${c||''}">${esc(l)}</button>`).join('')}</div></form>`;
+ document.body.append(d);const i=d.querySelector('input');if(i){i.focus();i.select()}
+ const end=v=>{d.remove();res(v)};
+ d.onclick=e=>{const x=e.target.closest('button');if(x){const v=b[x.dataset.i][1];end(o.input&&v?(i.value.trim()||null):v)}else if(e.target===d)end(null)};
+ d.firstChild.onsubmit=e=>{e.preventDefault();end(o.input?(i.value.trim()||null):b[0][1])};
+})}
+const conf=(t,m)=>dlg(t,m,{btns:[['हटाएँ',1,'bad'],['रद्द करें',null,'ghost']]});
+function theme(){const h=document.documentElement,dk=h.dataset.theme?h.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;h.dataset.theme=localStorage.th=dk?'light':'dark'}
+if(localStorage.th)document.documentElement.dataset.theme=localStorage.th;
+async function flush(){if(pendN){const f=pendN;pendN=null;clearTimeout(timer);await f()}if(!cur)return;clearTimeout(timer);const c=cur;cur=null;await put('chapters',c);const n=await get('novels',c.nid);if(n){n.upd=c.upd;await put('novels',n)}const s=$('#st');if(s)s.textContent=`${fmt(c.wc)} शब्द · सहेजा गया`}
+const app=$('#app');
+async function route(){await flush();const[,k,id]=location.hash.split('/');({n:novelView,c:editView,b:backupView,m:notesView,s:searchView}[k]||homeView)(id)}
+async function homeView(){
+ const ns=(await all('novels')).sort((a,b)=>b.upd-a.upd),cs=await all('chapters'),warn=ns.length&&Date.now()-(+localStorage.lb||0)>4*864e5;
+ app.innerHTML=`<header><h1>कलम</h1><button class="ic" onclick="location.hash='#/s'" aria-label="खोजें">${I.se}</button><button class="ic" onclick="theme()" aria-label="थीम">${I.th}</button><button class="ic" onclick="location.hash='#/b'" aria-label="बैकअप">${I.bk}</button></header><main>${warn?'<a class="warn" href="#/b">बैकअप पुराना है। अभी बैकअप लें।</a>':''}${ns.length?ns.map(n=>{const c=cs.filter(x=>x.nid===n.id);return`<div class="row"><a href="#/n/${n.id}"><b>${esc(n.title)}</b><span>${c.length} अध्याय · ${fmt(c.reduce((s,x)=>s+x.wc,0))} शब्द</span></a></div>`}).join(''):'<p class="empty">अभी कोई उपन्यास नहीं है। नीचे दबाकर पहला उपन्यास बनाएँ।</p>'}</main><button class="fab" onclick="newNovel()">+ नया उपन्यास</button>`}
+async function newNovel(){const t=await dlg('नया उपन्यास','',{input:1,ph:'उपन्यास का नाम'});if(!t)return;const id=uid();await put('novels',{id,title:t,upd:Date.now()});location.hash='#/n/'+id}
+async function novelView(id){
+ const n=await get('novels',id);if(!n)return location.hash='#/';const cs=await chaps(id);
+ app.innerHTML=`<header><button class="ic" onclick="history.back()" aria-label="वापस">${I.back}</button><h1>${esc(n.title)}</h1><button class="ic" onclick="renNovel('${id}')" aria-label="नाम बदलें">${I.ed}</button><button class="ic" onclick="delNovel('${id}')" aria-label="उपन्यास हटाएँ">${I.x}</button></header><main><div class="tools"><button class="btn" onclick="location.hash='#/m/${id}'">नोट्स (प्लॉट, किरदार)</button><button class="btn" onclick="expNovel('${id}')">टेक्स्ट एक्सपोर्ट</button></div>${cs.length?cs.map((c,i)=>`<div class="row"><a href="#/c/${c.id}"><b>${i+1}. ${esc(c.title||'बिना शीर्षक')}</b><span>${fmt(c.wc)} शब्द</span></a><button class="ic" onclick="mv('${c.id}','${id}',-1)">${I.up}</button><button class="ic" onclick="mv('${c.id}','${id}',1)">${I.down}</button><button class="ic" onclick="delCh('${c.id}','${id}')">${I.x}</button></div>`).join(''):'<p class="empty">अभी कोई अध्याय नहीं है। नीचे दबाकर लिखना शुरू करें।</p>'}</main><button class="fab" onclick="newCh('${id}')">+ नया अध्याय</button>`}
+async function renNovel(id){const n=await get('novels',id),t=await dlg('नाम बदलें','',{input:1,value:n.title});if(t){n.title=t;await put('novels',n);route()}}
+async function delNovel(id){if(!await conf('उपन्यास हटाएँ?','इसके सभी अध्याय भी हट जाएँगे। पहले बैकअप ले लें।'))return;for(const c of await chaps(id))await del('chapters',c.id);await del('novels',id);location.hash='#/'}
+async function newCh(nid){const cs=await chaps(nid),id=uid();await put('chapters',{id,nid,title:'अध्याय '+(cs.length+1),text:'',wc:0,ord:cs.length?cs[cs.length-1].ord+1:0,upd:Date.now()});location.hash='#/c/'+id}
+async function mv(id,nid,d){const cs=await chaps(nid),i=cs.findIndex(c=>c.id===id),j=i+d;if(j<0||j>=cs.length)return;[cs[i].ord,cs[j].ord]=[cs[j].ord,cs[i].ord];await put('chapters',cs[i]);await put('chapters',cs[j]);route()}
+async function delCh(id,nid){if(!await conf('अध्याय हटाएँ?',''))return;await del('chapters',id);route()}
+async function editView(id){
+ const c=await get('chapters',id);if(!c)return location.hash='#/';
+ app.innerHTML=`<header><button class="ic" onclick="history.back()" aria-label="वापस">${I.back}</button><input id="ti" placeholder="अध्याय का शीर्षक"><button class="ic" onclick="fz(-1)">A−</button><button class="ic" onclick="fz(1)">A+</button></header><textarea id="tx" placeholder="यहाँ लिखना शुरू करें…" style="font-size:${+localStorage.fs||19}px"></textarea><footer id="st">${fmt(c.wc)} शब्द</footer>`;
+ const ti=$('#ti'),tx=$('#tx');ti.value=c.title;tx.value=c.text;
+ const ch=()=>{c.title=ti.value;c.text=tx.value;c.wc=wc(c.text);c.upd=Date.now();cur=c;$('#st').textContent=`${fmt(c.wc)} शब्द · सहेज रहा है…`;clearTimeout(timer);timer=setTimeout(flush,700)};
+ ti.oninput=tx.oninput=ch}
+async function notesView(id){
+ const n=await get('novels',id);if(!n)return location.hash='#/';
+ app.innerHTML=`<header><button class="ic" onclick="history.back()" aria-label="वापस">${I.back}</button><h1>नोट्स · ${esc(n.title)}</h1></header><textarea id="tx" placeholder="प्लॉट, किरदार, आगे के अध्यायों के आइडिया…" style="font-size:${+localStorage.fs||19}px"></textarea><footer id="st">अपने आप सहेजा जाएगा</footer>`;
+ const tx=$('#tx');tx.value=n.notes||'';
+ tx.oninput=()=>{$('#st').textContent='सहेज रहा है…';clearTimeout(timer);pendN=async()=>{n.notes=tx.value;n.upd=Date.now();await put('novels',n);const e=$('#st');if(e)e.textContent='सहेजा गया'};timer=setTimeout(flush,700)}}
+function searchView(){
+ app.innerHTML=`<header><button class="ic" onclick="history.back()" aria-label="वापस">${I.back}</button><input id="q" placeholder="उपन्यास या अध्याय में खोजें"></header><main id="rs"><p class="empty">खोजने के लिए कोई शब्द लिखें।</p></main>`;
+ let t;const q=$('#q');q.focus();q.oninput=()=>{clearTimeout(t);t=setTimeout(()=>doSearch(q.value.trim()),300)}}
+async function doSearch(q){
+ const rs=$('#rs');if(!rs)return;if(!q){rs.innerHTML='<p class="empty">खोजने के लिए कोई शब्द लिखें।</p>';return}
+ const k=q.toLowerCase(),ns=Object.fromEntries((await all('novels')).map(n=>[n.id,n])),out=[];
+ await new Promise(res=>{const r=st('chapters').openCursor();r.onsuccess=()=>{const c=r.result;if(!c||out.length>=40)return res();const v=c.value,i=v.text.toLowerCase().indexOf(k);if(i>=0||v.title.toLowerCase().includes(k))out.push({v,i});c.continue()};r.onerror=()=>res()});
+ if(!document.body.contains(rs))return;
+ rs.innerHTML=out.length?out.map(({v,i})=>`<div class="row"><a href="#/c/${v.id}"><b>${esc(v.title||'बिना शीर्षक')}</b><span>${esc(ns[v.nid]?ns[v.nid].title:'')}${i>=0?' · …'+esc(v.text.slice(Math.max(0,i-25),i+60).replace(/\s+/g,' '))+'…':''}</span></a></div>`).join(''):'<p class="empty">कुछ नहीं मिला।</p>'}
+async function expNovel(id){
+ const n=await get('novels',id),cs=await chaps(id),txt=n.title+'\n\n'+cs.map(c=>c.title+'\n\n'+c.text).join('\n\n\n'),
+ f=new File([txt],(n.title.replace(/[\\/:*?"<>|]/g,'').trim()||'novel')+'.txt',{type:'text/plain'});
+ try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3);toast('फ़ाइल डाउनलोड हो गई')}}
+ catch(e){if(e.name!=='AbortError')toast('एक्सपोर्ट नहीं हो पाया')}}
+function fz(d){const f=Math.min(30,Math.max(14,(+localStorage.fs||19)+d));localStorage.fs=f;$('#tx').style.fontSize=f+'px'}
+function backupView(){
+ const lb=+localStorage.lb;
+ app.innerHTML=`<header><button class="ic" onclick="history.back()" aria-label="वापस">${I.back}</button><h1>बैकअप और रीस्टोर</h1></header><main><p class="note">आख़िरी बैकअप: ${lb?new Date(lb).toLocaleString('hi-IN'):'अभी तक नहीं लिया'}<br>फ़ाइल को Google Drive में रखें, ताकि फ़ोन खराब होने पर भी आपका उपन्यास सुरक्षित रहे।</p><button class="btn p" onclick="doBackup(1)">बैकअप लें (Drive / शेयर)</button><button class="btn" onclick="doBackup(0)">फ़ोन में फ़ाइल डाउनलोड करें</button><button class="btn" onclick="$('#rf').click()">बैकअप से रीस्टोर करें</button><input id="rf" type="file" accept=".json,application/json" hidden onchange="restore(this)"></main>`}
+async function doBackup(share){
+ const d={app:'kalam',v:1,date:new Date().toISOString(),novels:await all('novels'),chapters:await all('chapters')},name=`kalam-backup-${d.date.slice(0,10)}.json`,f=new File([JSON.stringify(d)],name,{type:'application/json'});
+ try{if(share&&navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3)}localStorage.lb=Date.now();toast('बैकअप तैयार है');backupView()}
+ catch(e){if(e.name!=='AbortError')toast('बैकअप नहीं बन पाया, दोबारा कोशिश करें')}}
+async function restore(inp){
+ const f=inp.files[0];inp.value='';if(!f)return;let d;
+ try{d=JSON.parse(await f.text());if(d.app!=='kalam'||!Array.isArray(d.novels)||!Array.isArray(d.chapters))throw 0}catch{return toast('यह कलम की बैकअप फ़ाइल नहीं है')}
+ const r=await dlg('रीस्टोर',`फ़ाइल में ${d.novels.length} उपन्यास और ${d.chapters.length} अध्याय हैं।`,{btns:[['मौजूदा के साथ जोड़ें','m'],['सब बदल दें','r','bad'],['रद्द करें',null,'ghost']]});
+ if(!r)return;
+ if(r==='r'){await rq(st('novels','readwrite').clear());await rq(st('chapters','readwrite').clear())}
+ for(const[s,a]of[['novels',d.novels],['chapters',d.chapters]])for(const x of a){const e=r==='m'?await get(s,x.id):0;if(!e||e.upd<=x.upd)await put(s,x)}
+ toast('रीस्टोर हो गया');location.hash='#/';route()}
+addEventListener('hashchange',route);
+addEventListener('pagehide',flush);document.addEventListener('visibilitychange',()=>document.hidden&&flush());
+open().then(d=>{db=d;if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');route()});
+</script></body></html>
